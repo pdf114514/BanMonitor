@@ -1,0 +1,39 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<h1 style="font-style: italic">Ban Monitor</h1>
+
+<p>pdf114514がBanされているかどうかが分かります</p>
+<p>bIsBanned: @(Status?.bIsBanned ?? true), LastUpdated: @(Status?.LastUpdated ?? new())</p>
+
+<button @onclick=SubscribePushNotification>通知を受け取るボタン</button>
+
+@code {
+    BanStatus? Status;
+
+    protected override async Task OnInitializedAsync() {
+        Status = await Http.GetFromJsonAsync<BanStatus>("banmonitor/status");
+    }
+
+    async void Alert(string message) => await JSRuntime.InvokeVoidAsync("alert", message);
+
+    async Task SubscribePushNotification() {
+        var bIsSupported = await JSRuntime.InvokeAsync<bool>("blazorPushNotifications.isSupported");
+        if (!bIsSupported) {
+            Alert("Push通知はサポートされていません");
+            return;
+        }
+        var permission = await JSRuntime.InvokeAsync<string>("blazorPushNotifications.askPermission");
+        if (permission != "granted") {
+            Alert("Push通知の許可が得られませんでした");
+            return;
+        }
+        var subscription = await JSRuntime.InvokeAsync<NotificationSubscription>("blazorPushNotifications.requestSubscription");
+        if (subscription is null) {
+            Alert("Push通知は既に登録されているか取得に失敗しました");
+            return;
+        }
+        await Http.PostAsJsonAsync("banmonitor/subscribe", subscription);
+    }
+}
