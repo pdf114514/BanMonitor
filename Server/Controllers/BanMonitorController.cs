@@ -49,7 +49,7 @@ public class BanMonitorController : ControllerBase {
         
         var push = new PushSubscription(subscription.Url, subscription.P256dh, subscription.Auth);
         var vapid = new VapidDetails("mailto:user@xthe.org", PublicKey, PrivateKey);
-        await new WebPushClient().SendNotificationAsync(push, JsonSerializer.Serialize(new{ message = "解除方法は無い(絶望)", url = "" }), vapid);
+        await new WebPushClient().SendNotificationAsync(push, JsonSerializer.Serialize(new{ message = "No ways to unsubscribe 💀", url = "" }), vapid);
         
         return NoContent();
     }
@@ -82,9 +82,9 @@ public class BanMonitorController : ControllerBase {
             try {
                 Console.WriteLine($"SendNotification: {subscription.Auth}");
                 var push = new PushSubscription(subscription.Url, subscription.P256dh, subscription.Auth);
-                var vapid = new VapidDetails("mailto:user@xthe.org", PublicKey, PrivateKey);
-                // await new WebPushClient().SendNotificationAsync(push, JsonSerializer.Serialize(new{ notification = new{ title = "fortnite.day", body = $"pdf114514 is {(_BanStatus.bIsBanned ? "still banned..." : "unbanned?!")}", icon = "/icon-192.png", url = "/", vibrate = new int[] { 100, 50, 100 } }}), vapid);
-                await new WebPushClient().SendNotificationAsync(push, JsonSerializer.Serialize(new{ message = $"pdf114514 is {(_BanStatus.bIsBanned ? "still banned..." : "unbanned?!")}", url = "" }), vapid);
+                var vapid = new VapidDetails("mailto:test@example.com", PublicKey, PrivateKey);
+                // await new WebPushClient().SendNotificationAsync(push, JsonSerializer.Serialize(new{ notification = new{ title = "fortnite.day", body = $"I am {(_BanStatus.bIsBanned ? "still banned..." : "unbanned?!")}", icon = "/icon-192.png", url = "/", vibrate = new int[] { 100, 50, 100 } }}), vapid);
+                await new WebPushClient().SendNotificationAsync(push, JsonSerializer.Serialize(new{ message = $"I am {(_BanStatus.bIsBanned ? "still banned..." : "unbanned?!")}", url = "" }), vapid);
                 successes.Add(subscription);
             } catch (Exception exc) { Console.WriteLine(exc.ToString()); }
         }
